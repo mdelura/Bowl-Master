@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Ball : MonoBehaviour
 {
-    public float throwPower = 150;
+    public float throwPower;
 
     private Rigidbody _rigidbody;
     private AudioSource _audioSource;
@@ -21,7 +21,7 @@ public class Ball : MonoBehaviour
 
     public void Launch()
     {
-        _rigidbody.velocity = Vector3.forward * throwPower;
+        _rigidbody.velocity = Vector3.forward * throwPower + new Vector3(Random.Range(-0.1f, 0.1f), 0);
     }
 
     // Update is called once per frame

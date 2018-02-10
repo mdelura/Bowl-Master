@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraControl : MonoBehaviour
 {
-    private const float zLimit = 1829;
+    private const float zLimit = 18.29F;
 
     private Ball _ball;
     private Vector3 _offfset;
@@ -20,7 +20,7 @@ public class CameraControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (transform.position.z < zLimit)
+        if (transform.position.z < zLimit + _offfset.z)
         {
             transform.position = new Vector3(transform.position.x, transform.position.y, _ball.transform.position.z + _offfset.z);
             transform.position = _ball.transform.position + _offfset;
