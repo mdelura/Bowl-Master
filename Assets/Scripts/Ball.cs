@@ -42,7 +42,7 @@ public class Ball : MonoBehaviour
             float distance = transform.position.z - _zStart;
             float duration = Time.realtimeSinceStartup - _launchStart;
             float speed = distance / duration;
-            print($"Distance: {distance}, Duration: {duration}, Speed: {speed} m/s, {speed / 3.6F} km/h.");
+            //print($"Distance: {distance}, Duration: {duration}, Speed: {speed} m/s, {speed / 3.6F} km/h.");
             _speedShown = true;
         }
     }

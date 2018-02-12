@@ -45,9 +45,6 @@ public class DragLaunch : MonoBehaviour
     public void NudgeStart()
     {
         _nudgeXStartPos = Input.mousePosition.x;
-
-        print($"Nudge X start: {_nudgeXStartPos}");
-
         _nudging = true;
     }
 
@@ -85,7 +82,7 @@ public class DragLaunch : MonoBehaviour
 
         //DEBUG
         _ySpeed.Add(dragVelocity.y / dragDuration);
-        print($"Average ySpeed is: {_ySpeed.Average()} m/s, {_ySpeed.Average() /3.6f} km/h, current throw {launchVelocity.z/3.6f} km/h");
+        //print($"Average ySpeed is: {_ySpeed.Average()} m/s, {_ySpeed.Average() /3.6f} km/h, current throw {launchVelocity.z/3.6f} km/h");
 
         _ball.Launch(launchVelocity);
     }
