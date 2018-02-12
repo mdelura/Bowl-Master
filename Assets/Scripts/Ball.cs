@@ -8,6 +8,7 @@ public class Ball : MonoBehaviour
     private Rigidbody _rigidbody;
     private AudioSource _audioSource;
 
+    public bool IsLaunched { get; private set; }
 
     // Use this for initialization
     void Start()
@@ -24,10 +25,13 @@ public class Ball : MonoBehaviour
 
     public void Launch(Vector3 velocity)
     {
+        if (IsLaunched) return;
+
         _launchStart = Time.realtimeSinceStartup;
         _zStart = transform.position.z;
         _rigidbody.useGravity = true;
         _rigidbody.velocity = velocity;
+        IsLaunched = true;
     }
 
     // Update is called once per frame

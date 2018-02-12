@@ -2,27 +2,65 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(Ball))]
 public class DragLaunch : MonoBehaviour
 {
     const float realSpeedFactor = 0.01878f;
 
-    private float _usedScreen = 0.8f;
-
     private Ball _ball;
+
+    private float _xBound;
+
+    private bool _nudging;
+
+    private float _nudgeXStartPos;
+
+    private float _panelWidth;
+    
     // Use this for initialization
     void Start()
     {
         _ball = GetComponent<Ball>();
+        _xBound = GameObject.Find("Floor").transform.lossyScale.x / 2 - _ball.transform.lossyScale.x / 2;
+        _panelWidth = Camera.main.ViewportToScreenPoint(transform.lossyScale).x;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (_nudging && !_ball.IsLaunched)
+        {
+            float moveValue = Input.mousePosition.x - _nudgeXStartPos;
+            float movePercent = Mathf.Clamp(moveValue / _panelWidth, -1, 1);
+            float nudgeValue = movePercent * _xBound;
 
+            var ballPosition = _ball.transform.position;
+            ballPosition.x = nudgeValue;
+            _ball.transform.position = ballPosition;
+        }
     }
 
+    public void NudgeStart()
+    {
+        _nudgeXStartPos = Input.mousePosition.x;
+
+        print($"Nudge X start: {_nudgeXStartPos}");
+
+        _nudging = true;
+    }
+
+    public void NudgeEnd() => _nudging = false;
+
+    public void Nudge(float xNudge)
+    {
+        if (_ball.IsLaunched) return;
+
+        var ballPosition = _ball.transform.position;
+        ballPosition.x = Mathf.Clamp(ballPosition.x + xNudge, - _xBound, _xBound);
+        _ball.transform.position = ballPosition;
+    }
 
     private float _dragStartTime;
     private Vector3 _dragStartPosition;
@@ -41,7 +79,7 @@ public class DragLaunch : MonoBehaviour
     {
         //Calculate velocity and launch the ball
         float dragDuration = Time.realtimeSinceStartup - _dragStartTime;
-        Vector3 dragVelocity = (Input.mousePosition - _dragStartPosition) / dragDuration;// * realSpeedFactor;
+        Vector3 dragVelocity = (Input.mousePosition - _dragStartPosition) / dragDuration * realSpeedFactor;
 
         Vector3 launchVelocity = new Vector3(dragVelocity.x, 0, dragVelocity.y );
 
@@ -49,11 +87,8 @@ public class DragLaunch : MonoBehaviour
         _ySpeed.Add(dragVelocity.y / dragDuration);
         print($"Average ySpeed is: {_ySpeed.Average()} m/s, {_ySpeed.Average() /3.6f} km/h, current throw {launchVelocity.z/3.6f} km/h");
 
-        //print($"Start position X: {_dragStartPosition.x}, Y: {_dragStartPosition.y}  Drag time: {dragTime}, Velocity: X: {throwVelocity.x}, Z: {throwVelocity.z}");
-
-
         _ball.Launch(launchVelocity);
-
-
     }
+
+
 }
