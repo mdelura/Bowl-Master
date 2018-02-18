@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,7 +9,30 @@ public class Ball : MonoBehaviour
     private Rigidbody _rigidbody;
     private AudioSource _audioSource;
 
-    public bool IsLaunched { get; private set; }
+    private Vector3 _startPosition;
+
+
+    bool _isLaunched;
+    public bool IsLaunched
+    {
+        get { return _isLaunched; }
+        set
+        {
+            _isLaunched = value;
+            OnIsLaunchedChanged(value);
+        }
+    }
+
+    private void OnIsLaunchedChanged(bool isLaunched)
+    {
+        _rigidbody.useGravity = isLaunched;
+        if (!isLaunched)
+        {
+            _rigidbody.velocity = Vector3.zero;
+            _rigidbody.angularVelocity = Vector3.zero;
+        }
+    }
+
 
     // Use this for initialization
     void Start()
@@ -16,6 +40,7 @@ public class Ball : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody>();
         _rigidbody.useGravity = false;
         _audioSource = GetComponent<AudioSource>();
+        _startPosition = transform.position;
     }
 
     const float speedDistance = 18.29f;
@@ -29,9 +54,8 @@ public class Ball : MonoBehaviour
 
         _launchStart = Time.realtimeSinceStartup;
         _zStart = transform.position.z;
-        _rigidbody.useGravity = true;
-        _rigidbody.velocity = velocity;
         IsLaunched = true;
+        _rigidbody.velocity = velocity;
     }
 
     // Update is called once per frame
@@ -58,4 +82,9 @@ public class Ball : MonoBehaviour
         }
     }
 
+    public void Reset()
+    {
+        transform.SetPositionAndRotation(_startPosition, Quaternion.identity);
+        IsLaunched = false;
+    }
 }

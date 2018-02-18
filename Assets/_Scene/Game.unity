@@ -755,6 +755,56 @@ Prefab:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114477845933642882, guid: 68869bf3ae57c0f45b962699a9a6e162,
+        type: 2}
+      propertyPath: standingThreshold
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 114750352219147286, guid: 68869bf3ae57c0f45b962699a9a6e162,
+        type: 2}
+      propertyPath: standingThreshold
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 114268535729427722, guid: 68869bf3ae57c0f45b962699a9a6e162,
+        type: 2}
+      propertyPath: standingThreshold
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 114308005347456126, guid: 68869bf3ae57c0f45b962699a9a6e162,
+        type: 2}
+      propertyPath: standingThreshold
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 114231142315132454, guid: 68869bf3ae57c0f45b962699a9a6e162,
+        type: 2}
+      propertyPath: standingThreshold
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 114239276391322664, guid: 68869bf3ae57c0f45b962699a9a6e162,
+        type: 2}
+      propertyPath: standingThreshold
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 114732158833181348, guid: 68869bf3ae57c0f45b962699a9a6e162,
+        type: 2}
+      propertyPath: standingThreshold
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 114695701150760956, guid: 68869bf3ae57c0f45b962699a9a6e162,
+        type: 2}
+      propertyPath: standingThreshold
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 114931170866680736, guid: 68869bf3ae57c0f45b962699a9a6e162,
+        type: 2}
+      propertyPath: standingThreshold
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 114446947049435910, guid: 68869bf3ae57c0f45b962699a9a6e162,
+        type: 2}
+      propertyPath: standingThreshold
+      value: 80
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 68869bf3ae57c0f45b962699a9a6e162, type: 2}
   m_IsPrefabParent: 0
@@ -1488,6 +1538,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48b59e063e2de784e8e4e4a238ff32cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pinsSettleWaitTime: 3
 --- !u!65 &2013419796
 BoxCollider:
   m_ObjectHideFlags: 0

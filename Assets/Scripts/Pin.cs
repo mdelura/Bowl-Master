@@ -13,12 +13,25 @@ public class Pin : MonoBehaviour
 
     }
 
-    bool _hasFallenMessage;
+    bool _fallenMessageShown;
 
     // Update is called once per frame
     void Update()
     {
+        if (!IsStanding() && !_fallenMessageShown)
+        {
+            print($"{name} fallen");
+            _fallenMessageShown = true;
+        }
     }
 
-    public bool IsStanding() =>Mathf.Abs(transform.rotation.eulerAngles.x) < standingThreshold && Mathf.Abs(transform.rotation.eulerAngles.z) < standingThreshold;
+    public bool IsStanding()
+    {
+        float xEulerAbs = Mathf.Abs(transform.rotation.eulerAngles.x);
+        float zEulerAbs = Mathf.Abs(transform.rotation.eulerAngles.z);
+        xEulerAbs = xEulerAbs > 180 ? 360 - xEulerAbs : xEulerAbs;
+        zEulerAbs = zEulerAbs > 180 ? 360 - zEulerAbs : zEulerAbs;
+
+        return xEulerAbs < standingThreshold && zEulerAbs < standingThreshold;
+    }
 }

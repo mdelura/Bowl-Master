@@ -5,19 +5,26 @@ using UnityEngine.UI;
 
 public class PinSetter : MonoBehaviour
 {
-    private Text _pinCountText;
+    public float pinsSettleWaitTime = 3;
 
-    // Use this for initialization
+
+    private Text _pinCountText;
+    private bool _ballEnteredBox;
+    private int _lastStandingCount = -1;
+    private float _lastChangeTime;
+    private Ball _ball;
+
     void Start()
     {
+        _ball = FindObjectOfType<Ball>();
         _pinCountText = GameObject.Find("Pin Count").GetComponent<Text>();
-
+        _pinCountText.text = CountStanding().ToString();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        _pinCountText.text = CountStanding().ToString();
+        if (_ballEnteredBox)
+            CheckStanding();
     }
 
     public int CountStanding()
@@ -35,10 +42,46 @@ public class PinSetter : MonoBehaviour
         return standingCount;
     }
 
+    private void CheckStanding()
+    {
+        int currentStandingCount = CountStanding();
+        
+        if (currentStandingCount != _lastStandingCount)
+        {
+            _lastChangeTime = Time.realtimeSinceStartup;
+            _lastStandingCount = currentStandingCount;
+            _pinCountText.text = _lastStandingCount.ToString();
+        }
+        else if ((Time.realtimeSinceStartup - _lastChangeTime) > pinsSettleWaitTime)
+        {
+            PinsHaveSettled();
+        }
+    }
+
+    private void PinsHaveSettled()
+    {
+        _ballEnteredBox = false;
+        _lastStandingCount = -1;
+        _pinCountText.color = Color.green;
+        _ball.Reset();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.GetComponent<Ball>())
+        {
+            _ballEnteredBox = true;
+            _pinCountText.color = Color.red;
+        }
+    }
 
     private void OnTriggerExit(Collider other)
     {
-        Destroy(other);
+        var pin = other.GetComponentInParent<Pin>();
 
+        if (pin)
+        {
+            Destroy(pin.gameObject);
+        }
     }
 }
