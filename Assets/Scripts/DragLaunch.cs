@@ -65,7 +65,7 @@ public class DragLaunch : MonoBehaviour
     public void DragStart()
     {
         //Capture time & position of drag start
-        _dragStartTime = Time.realtimeSinceStartup;
+        _dragStartTime = Time.time;
         _dragStartPosition = Input.mousePosition;
     }
 
@@ -75,14 +75,14 @@ public class DragLaunch : MonoBehaviour
     public void DragEnd()
     {
         //Calculate velocity and launch the ball
-        float dragDuration = Time.realtimeSinceStartup - _dragStartTime;
+        float dragDuration = Time.time - _dragStartTime;
         Vector3 dragVelocity = (Input.mousePosition - _dragStartPosition) / dragDuration * realSpeedFactor;
 
         Vector3 launchVelocity = new Vector3(dragVelocity.x, 0, dragVelocity.y );
 
         //DEBUG
         _ySpeed.Add(dragVelocity.y / dragDuration);
-        _ball.Launch(Vector3.forward * 18);
+        _ball.Launch(Vector3.forward * 15.5f);
         //print($"Average ySpeed is: {_ySpeed.Average()} m/s, {_ySpeed.Average() /3.6f} km/h, current throw {launchVelocity.z/3.6f} km/h");
 
         _ball.Launch(launchVelocity);

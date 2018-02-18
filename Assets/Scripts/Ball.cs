@@ -52,7 +52,7 @@ public class Ball : MonoBehaviour
     {
         if (IsLaunched) return;
 
-        _launchStart = Time.realtimeSinceStartup;
+        _launchStart = Time.time;
         _zStart = transform.position.z;
         IsLaunched = true;
         _rigidbody.velocity = velocity;
@@ -64,7 +64,7 @@ public class Ball : MonoBehaviour
         if (transform.position.z >= 18.29f && !_speedShown)
         {
             float distance = transform.position.z - _zStart;
-            float duration = Time.realtimeSinceStartup - _launchStart;
+            float duration = Time.time - _launchStart;
             float speed = distance / duration;
             //print($"Distance: {distance}, Duration: {duration}, Speed: {speed} m/s, {speed / 3.6F} km/h.");
             _speedShown = true;
@@ -86,5 +86,6 @@ public class Ball : MonoBehaviour
     {
         transform.SetPositionAndRotation(_startPosition, Quaternion.identity);
         IsLaunched = false;
+        _audioPlayed = false;
     }
 }
