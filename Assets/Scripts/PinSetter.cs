@@ -6,8 +6,12 @@ using UnityEngine.UI;
 
 public class PinSetter : MonoBehaviour
 {
+    const float pinZStartPosition = 18.29f;
+
     public float pinsSettleWaitTime = 3;
     public float raisePinsYDistance = 0.4f;
+
+    public GameObject pinSetPrefab;
 
 
     private Text _pinCountText;
@@ -132,7 +136,7 @@ public class PinSetter : MonoBehaviour
 
     public void RenewPins()
     {
-
+        Instantiate(pinSetPrefab, new Vector3(0, 0, pinZStartPosition), Quaternion.identity);
     }
 
     private void OnTriggerEnter(Collider other)
