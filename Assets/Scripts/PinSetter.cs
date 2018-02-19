@@ -35,7 +35,7 @@ public class PinSetter : MonoBehaviour
     void Update()
     {
         if (_ballEnteredBox)
-            CheckStanding();
+            UpdateStandingCountAndSettle();
     }
 
     public int CountStanding()
@@ -53,7 +53,7 @@ public class PinSetter : MonoBehaviour
         return standingCount;
     }
 
-    private void CheckStanding()
+    private void UpdateStandingCountAndSettle()
     {
         int currentStandingCount = CountStanding();
         
