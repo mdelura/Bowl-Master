@@ -136,7 +136,7 @@ public class PinSetter : MonoBehaviour
 
     public void RenewPins()
     {
-        Instantiate(pinSetPrefab, new Vector3(0, 0, pinZStartPosition), Quaternion.identity);
+        Instantiate(pinSetPrefab, new Vector3(0, 0.4f, pinZStartPosition), Quaternion.identity);
     }
 
     private void OnTriggerEnter(Collider other)
