@@ -7,7 +7,7 @@ using UnityEngine;
 [TestFixture]
 public class FrameResultTest
 {
-    ScoreManager _scoreManager;
+    GameManager _scoreManager;
 
     [Test]
     public void Bonus_ReturnsExpectedValue()

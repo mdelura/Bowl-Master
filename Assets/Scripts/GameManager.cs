@@ -13,7 +13,7 @@ public enum FrameAction
     EndGame
 }
 
-public class ScoreManager
+public class GameManager
 {
     public const int TotalPins = 10;
     const int lastFrame = 10;

@@ -20,7 +20,6 @@ public class Pin : MonoBehaviour
     {
         if (!IsStanding() && !_fallenMessageShown)
         {
-            print($"{name} fallen");
             _fallenMessageShown = true;
         }
     }

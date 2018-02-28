@@ -15,42 +15,33 @@ public class PinSetter : MonoBehaviour
 
 
     private Text _pinCountText;
-    private bool _ballEnteredBox;
+    private int _currentPins = GameManager.TotalPins;
     private int _lastStandingCount = -1;
     private float _lastChangeTime;
     private Ball _ball;
     private Animator _animator;
-    private int _throwInFrame;
     private GameObject _standingPins;
+    private GameManager _gameManager;
+
+    public bool PinsReady { get; private set; } = true;
+
+    private void RaisePinsNotReady() => PinsReady = false;
 
     void Start()
     {
         _animator = GetComponent<Animator>();
         _ball = FindObjectOfType<Ball>();
-        _pinCountText = GameObject.Find("Pin Count").GetComponent<Text>();
+        //_pinCountText = GameObject.Find("Pin Count").GetComponent<Text>();
+        _pinCountText = GameObject.Find("Info Text").GetComponent<Text>();
         _pinCountText.text = CountStanding().ToString();
         _standingPins = GameObject.Find("Standing Pins");
+        _gameManager = new GameManager();
     }
 
     void Update()
     {
-        if (_ballEnteredBox)
+        if (_ball.IsLaunched)
             UpdateStandingCountAndSettle();
-    }
-
-    public int CountStanding()
-    {
-        var pins = FindObjectsOfType<Pin>();
-
-        int standingCount = 0;
-
-        for (int i = 0; i < pins.Length; i++)
-        {
-            if (pins[i].IsStanding())
-                standingCount++;
-        }
-
-        return standingCount;
     }
 
     private void UpdateStandingCountAndSettle()
@@ -69,27 +60,55 @@ public class PinSetter : MonoBehaviour
         }
     }
 
+    private int CountStanding()
+    {
+        var pins = FindObjectsOfType<Pin>();
+
+        int standingCount = 0;
+
+        for (int i = 0; i < pins.Length; i++)
+        {
+            if (pins[i].IsStanding())
+                standingCount++;
+        }
+
+        return standingCount;
+    }
+
     private void PinsHaveSettled()
     {
-        PrepareNextThrow();
-        _ballEnteredBox = false;
+        int fallenPins = _currentPins - _lastStandingCount;
+
+        PrepareNextThrow(_gameManager.Bowl(fallenPins));
         _lastStandingCount = -1;
         _pinCountText.color = Color.green;
+        _pinCountText.text = 
+            $"Frame: {_gameManager.Frame}\r\n" +
+            $"Fallen pins: {fallenPins}\r\n" +
+            $"Current score: {_gameManager.TotalScore}\r\n" +
+            $"Standing: {_currentPins}";
         _ball.Reset();
     }
 
-    private void PrepareNextThrow()
+    private void PrepareNextThrow(FrameAction frameAction)
     {
-        if (_throwInFrame > 1 || _lastStandingCount == 0)
-        {
-            _throwInFrame = 0;
-            CleanPins();
-            _animator.SetTrigger(AnimatorParam.ResetTrigger);
-        }
-        else
+        if (frameAction == FrameAction.Tidy)
         {
             ReorganizeStandingPins();
             _animator.SetTrigger(AnimatorParam.TidyTrigger);
+            _currentPins = _lastStandingCount;
+        }
+        else
+        {
+            CleanPins();
+            _animator.SetTrigger(AnimatorParam.ResetTrigger);
+            _currentPins = GameManager.TotalPins;
+            //_pinCountText.text = _currentPins.ToString();
+        }
+
+        if (frameAction == FrameAction.EndGame)
+        {
+            //_scoreManager.Reset();
         }
     }
 
@@ -132,6 +151,8 @@ public class PinSetter : MonoBehaviour
 
             pinsRigidBodies[i].gameObject.transform.rotation = Quaternion.identity;
         }
+
+        PinsReady = true;
     }
 
     public void RenewPins()
@@ -143,8 +164,6 @@ public class PinSetter : MonoBehaviour
     {
         if (other.GetComponent<Ball>())
         {
-            _ballEnteredBox = true;
-            _throwInFrame++;
             _pinCountText.color = Color.red;
         }
     }
@@ -163,6 +182,5 @@ public class PinSetter : MonoBehaviour
     {
         public const string TidyTrigger = "Tidy Trigger";
         public const string ResetTrigger = "Reset Trigger";
-
     }
 }
