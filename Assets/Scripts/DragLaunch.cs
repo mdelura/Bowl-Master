@@ -14,7 +14,7 @@ public class DragLaunch : MonoBehaviour
     private bool _nudging;
     private float _nudgeXStartPos;
     private float _panelWidth;
-    private PinSetter _pinSetter;
+    private PinManager _pinSetter;
 
     // Use this for initialization
     void Start()
@@ -22,7 +22,7 @@ public class DragLaunch : MonoBehaviour
         _ball = GetComponent<Ball>();
         _xBound = GameObject.Find("Floor").transform.lossyScale.x / 2 - _ball.transform.lossyScale.x / 2;
         _panelWidth = Camera.main.ViewportToScreenPoint(transform.lossyScale).x;
-        _pinSetter = FindObjectOfType<PinSetter>();
+        _pinSetter = FindObjectOfType<PinManager>();
     }
 
     // Update is called once per frame

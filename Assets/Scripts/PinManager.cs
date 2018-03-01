@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PinSetter : MonoBehaviour
+public class PinManager : MonoBehaviour
 {
     const float pinZStartPosition = 18.29f;
 
@@ -79,7 +79,7 @@ public class PinSetter : MonoBehaviour
     {
         int fallenPins = _currentPins - _lastStandingCount;
 
-        PrepareNextThrow(_gameManager.Bowl(fallenPins));
+        PreparePins(_gameManager.Bowl(fallenPins));
         _lastStandingCount = -1;
         _pinCountText.color = Color.green;
         _pinCountText.text = 
@@ -90,7 +90,7 @@ public class PinSetter : MonoBehaviour
         _ball.Reset();
     }
 
-    private void PrepareNextThrow(FrameAction frameAction)
+    private void PreparePins(FrameAction frameAction)
     {
         if (frameAction == FrameAction.Tidy)
         {
@@ -108,7 +108,7 @@ public class PinSetter : MonoBehaviour
 
         if (frameAction == FrameAction.EndGame)
         {
-            //_scoreManager.Reset();
+            //_gameManager.Reset();
         }
     }
 
