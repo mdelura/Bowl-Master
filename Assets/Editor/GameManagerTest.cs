@@ -238,6 +238,86 @@ public class GameManagerTest
     }
 
     [Test]
+    public void CumulativeFrameScores_AfterBowls_ReturnsExpectedValue()
+    {
+        //Arrange
+        var items = new Tuple<int[], int?[]>[]
+        {
+            new Tuple<int[], int?[]>(
+                new int[] { 2 },  
+                new int?[10] { null, null, null, null, null, null, null, null, null, null }
+                ),
+            new Tuple<int[], int?[]>(
+                new int[] { 2, 3 },
+                new int?[10] { 5, null, null, null, null, null, null, null, null, null }
+                ),
+            new Tuple<int[], int?[]>(
+                new int[] { 1, 2, 4 },
+                new int?[10] { 3, null, null, null, null, null, null, null, null, null }
+                ),
+            new Tuple<int[], int?[]>(
+                new int[] { 2, 8, 1, 2 },
+                new int?[10] { 11, 14, null, null, null, null, null, null, null, null }
+                ),
+            new Tuple<int[], int?[]>(
+                new int[] { 2, 8, 10, 7, 1 },
+                new int?[10] { 20, 38, 46, null, null, null, null, null, null, null }
+                ),
+            new Tuple<int[], int?[]>(
+                new int[] { 10, 10, 10, 0, 1 },
+                new int?[10] { 30, 50, 61, 62, null, null, null, null, null, null }
+                ),
+            new Tuple<int[], int?[]>(
+                new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9 },
+                new int?[10] { 2, 4, 6, 8, 10, 12, 14, 16, 18, null }
+                ),
+            new Tuple<int[], int?[]>(
+                new int[] { 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10},
+                new int?[10] { 30, 60, 90, 120, 150, 180, 210, 240, 270, 300 }
+                ),
+            new Tuple<int[], int?[]>(
+                new int[] { 1, 2, 5, 5, 5, 4, 5, 5, 10, 9, 1, 2, 3, 4, 6, 10, 10, 9, 1 },
+                new int?[10] { 3, 18, 27, 47, 67, 79, 84, 104, 133, 153 }
+                ),
+            new Tuple<int[], int?[]>(
+                new int[] { 8,1, 9,1, 10, 9,1, 10, 10, 10, 10, 9,1, 9,1,10 },
+                new int?[10] { 9, 29, 49, 69, 99, 129, 158, 178, 197, 217 }
+                ),
+        }
+        .Select(t => new
+        {
+            Bowls = t.Item1,
+            ExpectedCumulativeScores = t.Item2
+        })
+        .ToArray();
+
+        var expectedResults = items
+            .Select(i => i.ExpectedCumulativeScores)
+            .ToArray();
+
+        //Act
+        var actualResults = new List<int?[]>();
+        foreach (var item in items)
+        {
+            GameManager gameManager = new GameManager();
+            foreach (var bowl in item.Bowls)
+            {
+                gameManager.Bowl(bowl);
+            }
+            actualResults.Add(gameManager.CumulativeFrameScores);
+        }
+
+        //Assert
+        for (int i = 0; i < expectedResults.Length; i++)
+        {
+            CollectionAssert.AreEqual(expectedResults[i], actualResults[i], $"Collection index: {i}");
+        }
+    }
+
+
+
+
+    [Test]
     public void Reset_ExpectedPropertiesAreReset()
     {
         //Arrange

@@ -41,13 +41,49 @@ public class GameManager
             //Calculate bonuses
             for (int index = 0; index < _frames.Length - 1; index++)
             {
-                totalScore += GetBonus(index + 1, _frames[index].Bonus);
+                var bonus = GetBonus(index + 1, _frames[index].Bonus);
+                if (bonus.HasValue)
+                {
+                    totalScore += bonus.Value;
+                }
             }
             return totalScore;
         }
     }
 
-    private int GetBonus(int frameNumber, Bonus bonus)
+    public int?[] CumulativeFrameScores
+    {
+        get
+        {
+            int[] scores = new int[_frames.Length];
+            int?[] cumulativeScores = new int?[_frames.Length];
+
+            for (int index = 0; index < _frames.Length; index++)
+            {
+                var bonus = GetBonus(index + 1, _frames[index].Bonus);
+
+                //Check if frame is already finished, and if has bonus
+                if (_frames[index].Scores.Any() &&
+                    bonus.HasValue)
+                {
+                    scores[index] = _frames[index].Scores.Sum() + bonus.Value;
+                    cumulativeScores[index] = scores.Sum();
+                }
+                //Check if last frame - then simply sum all values
+                else if (index == lastFrame - 1 &&
+                    _frames[index].Scores.Any())
+                {
+                    scores[index] = _frames[index].Scores.Sum();
+                    cumulativeScores[index] = scores.Sum();
+                }
+            }
+
+            return cumulativeScores;
+        }
+    }
+
+
+    private int? GetBonus(int frameNumber, Bonus bonus)
     {
         if (bonus == Bonus.None)
             return 0;
@@ -58,11 +94,12 @@ public class GameManager
 
         List<int> nextScores = new List<int>();
 
-        for (int f = 0; f < nextFrames.Length; f++)
+        foreach (FrameResult nextFrame in nextFrames)
         {
-            for (int s = 0; s < nextFrames[f].Scores.Length; s++)
+            foreach (int score in nextFrame.Scores)
             {
-                nextScores.Add(nextFrames[f].Scores[s]);
+                nextScores.Add(score);
+                //If bonus score are ready return bonus value
                 if (nextScores.Count == (int)bonus)
                 {
                     return nextScores.Sum();
@@ -70,7 +107,8 @@ public class GameManager
             }
         }
 
-        return nextScores.Sum();
+        //If bonus score is not yet known return null
+        return null;
     }
 
     public int StandingPins
