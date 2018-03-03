@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 public enum FrameAction
 {
@@ -13,7 +13,7 @@ public enum FrameAction
     EndGame
 }
 
-public class GameManager
+public class GameManager : MonoBehaviour
 {
     public const int TotalPins = 10;
     const int lastFrame = 10;
@@ -22,7 +22,21 @@ public class GameManager
     private int _standingPins = TotalPins;
     private FrameResult[] _frames = new FrameResult[lastFrame];
     private List<int> _currentFrameScores = new List<int>();
+    private GameObject[] _framesScores;
 
+    private void Start()
+    {
+        var scoresPanel = GameObject.Find("Scores Panel");
+
+        _framesScores = new GameObject[scoresPanel.transform.childCount];
+
+        int index = 0;
+        foreach (RectTransform item in scoresPanel.transform)
+        {
+            _framesScores[index] = item.gameObject;
+            index++;
+        }
+    }
 
     #region Properties
     public int Frame
@@ -37,7 +51,7 @@ public class GameManager
     {
         get
         {
-            int totalScore = _frames.Sum(f => f.Scores.Sum()) + _currentFrameScores.Sum();
+            int totalScore = _frames.Sum(f => f.Scores.Sum());
             //Calculate bonuses
             for (int index = 0; index < _frames.Length - 1; index++)
             {
@@ -63,7 +77,8 @@ public class GameManager
                 var bonus = GetBonus(index + 1, _frames[index].Bonus);
 
                 //Check if frame is already finished, and if has bonus
-                if (_frames[index].Scores.Any() &&
+                if (index < Frame - 1 &&
+                    _frames[index].Scores.Any() &&
                     bonus.HasValue)
                 {
                     scores[index] = _frames[index].Scores.Sum() + bonus.Value;
@@ -82,6 +97,133 @@ public class GameManager
         }
     }
 
+    public int StandingPins
+    {
+        get { return _standingPins; }
+        set
+        {
+            if (value < 0 || value > TotalPins)
+                Debug.LogError("Invalid number of pins.");
+            _standingPins = value;
+        }
+    }
+
+    public bool GameFinished { get; private set; }
+    #endregion
+
+    #region Public Methods
+    public FrameAction Bowl(int pins)
+    {
+        StandingPins -= pins;
+        _currentFrameScores.Add(pins);
+        SaveFrameResult();
+        UpdateScoreView();
+
+        //Handle last frame
+        if (Frame == lastFrame)
+        {
+            return HandleLastFrame();
+        }
+
+        //Finish frame if second throw or strike.
+        if (CurrentThrow == 2 || StandingPins == 0)
+        {
+            return FinishFrame();
+        }
+        //Otherwise return Tidy
+        else
+        {
+            return FrameAction.Tidy;
+        }
+    }
+
+    private void UpdateScoreView()
+    {
+        if (_framesScores == null || Frame > lastFrame)
+        {
+            return;
+        }
+
+        var cumulativeFrameScores = CumulativeFrameScores;
+
+        for (int frameIndex = 0; frameIndex < Frame; frameIndex++)
+        {
+            var frameScoreView = _framesScores[frameIndex];
+            var frameResult = _frames[frameIndex];
+
+            var throwScores = frameIndex == Frame - 1999
+                ? _currentFrameScores.ToArray()
+                : frameResult.Scores;
+
+            //Set throw scores
+            if (throwScores.Any())
+            {
+                const string throwTextName = "Throw";
+
+                var throwViews = frameScoreView.GetComponentsInChildren<Text>()
+                    .Where(t => t.name.Substring(0, throwTextName.Length) == throwTextName)
+                    .ToArray();
+
+                for (int scoreIndex = 0; scoreIndex < throwScores.Length; scoreIndex++)
+                {
+                    var score = throwScores[scoreIndex];
+                    string scoreText = score.ToString();
+                    //Check for Spare first
+                    if (scoreIndex == 1 &&
+                        score != 0 &&
+                        throwScores.Take(2).Sum() == TotalPins)
+                    {
+                        scoreText = "/";
+                    }
+                    else if (score == TotalPins)
+                        scoreText = "X";
+                    throwViews[scoreIndex].text = scoreText;
+                }
+                //Set Spare mark if spare
+                if (throwScores.Length == 2 && throwScores.Sum() == 10)
+                {
+                    throwViews[1].text = "/";
+                }
+            }
+
+            //Set cumulative frame score
+            if (cumulativeFrameScores[frameIndex].HasValue &&
+                (Frame != lastFrame || GameFinished))
+            {
+                frameScoreView.GetComponentsInChildren<Text>()
+                    .Single(t => t.name == "Frame Score").text = cumulativeFrameScores[frameIndex].Value.ToString();
+            }
+
+        }
+    }
+
+    public void Reset()
+    {
+        Frame = 1;
+        _frames = new FrameResult[lastFrame];
+
+    } 
+    #endregion
+
+    private FrameAction HandleLastFrame()
+    {
+        if (CurrentThrow <= 2 && _currentFrameScores.Sum() >= TotalPins)
+        {
+            return StandingPins == 0
+                ? ResetPins()
+                : FrameAction.Tidy;
+        }
+        else if (CurrentThrow == 1)
+        {
+            return FrameAction.Tidy;
+        }
+        else
+        {
+            FinishFrame();
+            GameFinished = true;
+            return FrameAction.EndGame;
+        }
+    }
 
     private int? GetBonus(int frameNumber, Bonus bonus)
     {
@@ -108,83 +250,24 @@ public class GameManager
         }
 
         //If bonus score is not yet known return null
-        return null;
+        return nextScores.Count == (int)bonus
+            ? nextScores.Sum()
+            : new int?();
     }
-
-    public int StandingPins
-    {
-        get { return _standingPins; }
-        set
-        {
-            if (value < 0 || value > TotalPins)
-                throw new UnityException("Invalid number of pins.");
-            _standingPins = value;
-        }
-    }
-    #endregion
-
-    #region Public Methods
-    public FrameAction Bowl(int pins)
-    {
-        StandingPins -= pins;
-        _currentFrameScores.Add(pins);
-
-        //Handle last frame
-        if (Frame == lastFrame)
-        {
-            return HandleLastFrame();
-        }
-
-        //Finish frame if second throw or strike.
-        if (CurrentThrow == 2 || StandingPins == 0)
-        {
-            return FinishFrame();
-        }
-        //Otherwise return Tidy
-        else
-        {
-            return FrameAction.Tidy;
-        }
-    }
-
-    public FrameResult GetFrameResult(int frameNumber) => _frames[frameNumber - 1];
-
-    private FrameAction HandleLastFrame()
-    {
-        if (CurrentThrow <= 2 && _currentFrameScores.Sum() >= TotalPins)
-        {
-            return StandingPins == 0
-                ? ResetPins()
-                : FrameAction.Tidy;
-        }
-        else if (CurrentThrow == 1)
-        {
-            return FrameAction.Tidy;
-        }
-        else
-        {
-            SaveFrameResult();
-            _currentFrameScores.Clear();
-            return FrameAction.EndGame;
-        }
-    }
-
-    public void Reset()
-    {
-        Frame = 1;
-        _frames = new FrameResult[lastFrame];
-
-    } 
-    #endregion
 
     private FrameAction FinishFrame()
     {
         SaveFrameResult();
         Frame++;
+        UpdateScoreView();
         return FrameAction.EndFrame;
     }
 
-    private void SaveFrameResult() => _frames[Frame - 1] = new FrameResult(_currentFrameScores.ToArray());
+    private void SaveFrameResult()
+    {
+        if (Frame <= lastFrame)
+            _frames[Frame - 1] = new FrameResult(_currentFrameScores.ToArray());
+    }
 
     private FrameAction ResetPins()
     {

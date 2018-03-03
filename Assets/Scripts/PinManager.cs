@@ -14,11 +14,10 @@ public class PinManager : MonoBehaviour
     public GameObject pinSetPrefab;
 
 
-    private Text _pinCountText;
     private int _currentPins = GameManager.TotalPins;
     private int _lastStandingCount = -1;
     private float _lastChangeTime;
-    private Ball _ball;
+    private Ball _ball; //TODO: Refactor. PinManager shouldn't manage ball.
     private Animator _animator;
     private GameObject _standingPins;
     private GameManager _gameManager;
@@ -31,11 +30,8 @@ public class PinManager : MonoBehaviour
     {
         _animator = GetComponent<Animator>();
         _ball = FindObjectOfType<Ball>();
-        //_pinCountText = GameObject.Find("Pin Count").GetComponent<Text>();
-        _pinCountText = GameObject.Find("Info Text").GetComponent<Text>();
-        _pinCountText.text = CountStanding().ToString();
         _standingPins = GameObject.Find("Standing Pins");
-        _gameManager = new GameManager();
+        _gameManager = FindObjectOfType<GameManager>();
     }
 
     void Update()
@@ -52,7 +48,6 @@ public class PinManager : MonoBehaviour
         {
             _lastChangeTime = Time.time;
             _lastStandingCount = currentStandingCount;
-            _pinCountText.text = _lastStandingCount.ToString();
         }
         else if ((Time.time - _lastChangeTime) > pinsSettleWaitTime)
         {
@@ -81,12 +76,6 @@ public class PinManager : MonoBehaviour
 
         PreparePins(_gameManager.Bowl(fallenPins));
         _lastStandingCount = -1;
-        _pinCountText.color = Color.green;
-        _pinCountText.text = 
-            $"Frame: {_gameManager.Frame}\r\n" +
-            $"Fallen pins: {fallenPins}\r\n" +
-            $"Current score: {_gameManager.TotalScore}\r\n" +
-            $"Standing: {_currentPins}";
         _ball.Reset();
     }
 
@@ -103,12 +92,6 @@ public class PinManager : MonoBehaviour
             CleanPins();
             _animator.SetTrigger(AnimatorParam.ResetTrigger);
             _currentPins = GameManager.TotalPins;
-            //_pinCountText.text = _currentPins.ToString();
-        }
-
-        if (frameAction == FrameAction.EndGame)
-        {
-            //_gameManager.Reset();
         }
     }
 
@@ -158,14 +141,6 @@ public class PinManager : MonoBehaviour
     public void RenewPins()
     {
         Instantiate(pinSetPrefab, new Vector3(0, 0.4f, pinZStartPosition), Quaternion.identity);
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.GetComponent<Ball>())
-        {
-            _pinCountText.color = Color.red;
-        }
     }
 
     private void OnTriggerExit(Collider other)

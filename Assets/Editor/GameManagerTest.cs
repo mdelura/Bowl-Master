@@ -9,13 +9,11 @@ public class GameManagerTest
 {
     GameManager _gameManager;
 
-
     [SetUp]
     public void TestSetup()
     {
         _gameManager = new GameManager();
     }
-
 
     [Test]
     public void Bowl_Strike_ReturnsEndFrame()
@@ -33,8 +31,6 @@ public class GameManagerTest
             Assert.AreEqual(FrameAction.Tidy, gameManager.Bowl(i));
         }
     }
-
-
 
     [Test]
     public void Bowl_TwoThrows_ReturnsEndTurn()
@@ -268,10 +264,6 @@ public class GameManagerTest
                 new int?[10] { 30, 50, 61, 62, null, null, null, null, null, null }
                 ),
             new Tuple<int[], int?[]>(
-                new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9 },
-                new int?[10] { 2, 4, 6, 8, 10, 12, 14, 16, 18, null }
-                ),
-            new Tuple<int[], int?[]>(
                 new int[] { 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10},
                 new int?[10] { 30, 60, 90, 120, 150, 180, 210, 240, 270, 300 }
                 ),
@@ -314,9 +306,6 @@ public class GameManagerTest
         }
     }
 
-
-
-
     [Test]
     public void Reset_ExpectedPropertiesAreReset()
     {
@@ -332,38 +321,5 @@ public class GameManagerTest
         Assert.AreEqual(0, _gameManager.CurrentThrow);
         Assert.AreEqual(10, _gameManager.StandingPins);
         Assert.AreEqual(0, _gameManager.TotalScore);
-    }
-
-    [Test]
-    public void GetFrameResult_ReturnsExpectedFrameResult()
-    {
-        //Arrange
-        var bowls = new int[]
-        {
-            1,
-            3,
-            10,
-            7,
-            3
-        };
-
-        var expectedResults = new FrameResult[]
-        {
-            new FrameResult( 1, 3),
-            new FrameResult(10),
-            new FrameResult(7, 3),
-        };
-
-        foreach (var bowl in bowls)
-        {
-            _gameManager.Bowl(bowl);
-        }
-
-        //Assert
-        for (int i = 0; i < expectedResults.Length; i++)
-        {
-            Assert.AreEqual(expectedResults[i].Bonus, _gameManager.GetFrameResult(i + 1).Bonus);
-            CollectionAssert.AreEqual(expectedResults[i].Scores, _gameManager.GetFrameResult(i + 1).Scores);
-        }
     }
 }

@@ -43,5 +43,6 @@ public struct FrameResult
 
         }
     }
+
     public int[] Scores => _scores ?? new int[] { };
 }
