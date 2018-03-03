@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     private FrameResult[] _frames = new FrameResult[lastFrame];
     private List<int> _currentFrameScores = new List<int>();
     private GameObject[] _framesScores;
+    private GameObject _restartButton;
 
     private void Start()
     {
@@ -36,6 +37,9 @@ public class GameManager : MonoBehaviour
             _framesScores[index] = item.gameObject;
             index++;
         }
+
+        _restartButton = GameObject.Find("Restart Button");
+        _restartButton.SetActive(false);
     }
 
     #region Properties
@@ -108,7 +112,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public bool GameFinished { get; private set; }
+    private bool _gameFinished;
+    public bool GameFinished
+    {
+        get { return _gameFinished; }
+        private set { OnGameFinishedChanged(value); }
+    }
     #endregion
 
     #region Public Methods
@@ -193,7 +202,6 @@ public class GameManager : MonoBehaviour
                 frameScoreView.GetComponentsInChildren<Text>()
                     .Single(t => t.name == "Frame Score").text = cumulativeFrameScores[frameIndex].Value.ToString();
             }
-
         }
     }
 
@@ -201,10 +209,23 @@ public class GameManager : MonoBehaviour
     {
         Frame = 1;
         _frames = new FrameResult[lastFrame];
-
-    } 
+        foreach (Text scoreDisplayItem in _framesScores.SelectMany(i => i.GetComponentsInChildren<Text>()))
+        {
+            scoreDisplayItem.text = null;
+        }
+        GameFinished = false;
+    }
     #endregion
 
+    private void OnGameFinishedChanged(bool value)
+    {
+        if (_gameFinished != value)
+        {
+            _gameFinished = value;
+            _restartButton.SetActive(_gameFinished);
+        }
+
+    }
     private FrameAction HandleLastFrame()
     {
         if (CurrentThrow <= 2 && _currentFrameScores.Sum() >= TotalPins)
@@ -221,6 +242,7 @@ public class GameManager : MonoBehaviour
         {
             FinishFrame();
             GameFinished = true;
+
             return FrameAction.EndGame;
         }
     }
