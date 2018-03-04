@@ -82,9 +82,9 @@ public class DragLaunch : MonoBehaviour
 
         //DEBUG
         _ySpeed.Add(dragVelocity.y / dragDuration);
-        _ball.Launch(Vector3.forward * 15.5f);
-        //print($"Average ySpeed is: {_ySpeed.Average()} m/s, {_ySpeed.Average() /3.6f} km/h, current throw {launchVelocity.z/3.6f} km/h");
-        //_ball.Launch(launchVelocity);
+        //_ball.Launch(Vector3.forward * 15.5f);
+        print($"Average ySpeed is: {_ySpeed.Average()} m/s, {_ySpeed.Average() / 3.6f} km/h, current throw {launchVelocity.z / 3.6f} km/h");
+        _ball.Launch(launchVelocity);
     }
 
 
