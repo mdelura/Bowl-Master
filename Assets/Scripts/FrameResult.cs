@@ -28,11 +28,11 @@ public struct FrameResult
     {
         get
         {
-            if (Scores.FirstOrDefault() == GameManager.TotalPins)
+            if (Scores.FirstOrDefault() == ScoreManager.TotalPins)
             {
                 return Bonus.Strike;
             }
-            else if (Scores.Sum() >= GameManager.TotalPins)
+            else if (Scores.Sum() >= ScoreManager.TotalPins)
             {
                 return Bonus.Spare;
             }

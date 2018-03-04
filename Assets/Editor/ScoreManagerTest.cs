@@ -5,21 +5,21 @@ using NUnit.Framework;
 using UnityEngine;
 
 [TestFixture]
-public class GameManagerTest
+public class ScoreManagerTest
 {
-    GameManager _gameManager;
+    ScoreManager _scoreManager;
 
     [SetUp]
     public void TestSetup()
     {
-        _gameManager = new GameManager();
+        _scoreManager = new ScoreManager();
     }
 
     [Test]
     public void Bowl_Strike_ReturnsEndFrame()
     {
-        GameManager gameManager = new GameManager();
-        Assert.AreEqual(FrameAction.EndFrame, gameManager.Bowl(10));
+        ScoreManager scoreManager = new ScoreManager();
+        Assert.AreEqual(FrameAction.EndFrame, scoreManager.Bowl(10));
     }
 
     [Test]
@@ -27,8 +27,8 @@ public class GameManagerTest
     {
         for (int i = 0; i <= 9; i++)
         {
-            GameManager gameManager = new GameManager();
-            Assert.AreEqual(FrameAction.Tidy, gameManager.Bowl(i));
+            ScoreManager scoreManager = new ScoreManager();
+            Assert.AreEqual(FrameAction.Tidy, scoreManager.Bowl(i));
         }
     }
 
@@ -37,9 +37,9 @@ public class GameManagerTest
     {
         for (int i = 0; i <= 10; i++)
         {
-            GameManager gameManager = new GameManager();
-            gameManager.Bowl(0);
-            Assert.AreEqual(FrameAction.EndFrame, gameManager.Bowl(i));
+            ScoreManager scoreManager = new ScoreManager();
+            scoreManager.Bowl(0);
+            Assert.AreEqual(FrameAction.EndFrame, scoreManager.Bowl(i));
         }
     }
 
@@ -49,11 +49,11 @@ public class GameManagerTest
         //Arrange
         for (int i = 0; i < 11; i++)
         {
-            _gameManager.Bowl(10);
+            _scoreManager.Bowl(10);
         }
 
         //Assert
-        Assert.AreEqual(FrameAction.EndGame, _gameManager.Bowl(10));
+        Assert.AreEqual(FrameAction.EndGame, _scoreManager.Bowl(10));
     }
 
     [Test]
@@ -62,14 +62,14 @@ public class GameManagerTest
         //Arrange
         for (int i = 0; i < 9; i++)
         {
-            _gameManager.Bowl(10);
+            _scoreManager.Bowl(10);
         }
 
-        _gameManager.Bowl(5);
+        _scoreManager.Bowl(5);
 
 
         //Assert
-        Assert.AreEqual(FrameAction.ResetPins, _gameManager.Bowl(5));
+        Assert.AreEqual(FrameAction.ResetPins, _scoreManager.Bowl(5));
     }
 
     [Test]
@@ -78,11 +78,11 @@ public class GameManagerTest
         //Arrange
         for (int i = 0; i < 19; i++)
         {
-            _gameManager.Bowl(1);
+            _scoreManager.Bowl(1);
         }
 
         //Assert
-        Assert.AreEqual(FrameAction.EndGame, _gameManager.Bowl(1));
+        Assert.AreEqual(FrameAction.EndGame, _scoreManager.Bowl(1));
     }
 
     [Test]
@@ -91,12 +91,12 @@ public class GameManagerTest
         //Arrange
         for (int i = 0; i < 18; i++)
         {
-            _gameManager.Bowl(1);
+            _scoreManager.Bowl(1);
         }
 
-        _gameManager.Bowl(GameManager.TotalPins);
+        _scoreManager.Bowl(ScoreManager.TotalPins);
         //Assert
-        Assert.AreEqual(FrameAction.Tidy, _gameManager.Bowl(1));
+        Assert.AreEqual(FrameAction.Tidy, _scoreManager.Bowl(1));
     }
 
     [Test]
@@ -127,12 +127,12 @@ public class GameManagerTest
         var actualResults = new List<int>();
         foreach (var item in items)
         {
-            GameManager gameManager = new GameManager();
+            ScoreManager scoreManager = new ScoreManager();
             foreach (var bowl in item.Bowls)
             {
-                gameManager.Bowl(bowl);
+                scoreManager.Bowl(bowl);
             }
-            actualResults.Add(gameManager.Frame);
+            actualResults.Add(scoreManager.Frame);
         }
 
         //Assert
@@ -167,12 +167,12 @@ public class GameManagerTest
         var actualResults = new List<int>();
         foreach (var item in items)
         {
-            GameManager gameManager = new GameManager();
+            ScoreManager scoreManager = new ScoreManager();
             foreach (var bowl in item.Bowls)
             {
-                gameManager.Bowl(bowl);
+                scoreManager.Bowl(bowl);
             }
-            actualResults.Add(gameManager.CurrentThrow);
+            actualResults.Add(scoreManager.CurrentThrow);
         }
 
         //Assert
@@ -184,15 +184,15 @@ public class GameManagerTest
     {
         for (int i = 0; i <= 9; i++)
         {
-            GameManager gameManager = new GameManager();
-            gameManager.Bowl(i);
+            ScoreManager scoreManager = new ScoreManager();
+            scoreManager.Bowl(i);
 
-            Assert.AreEqual(10 - i, gameManager.StandingPins);
+            Assert.AreEqual(10 - i, scoreManager.StandingPins);
         }
     }
 
     [Test]
-    public void TotalScore_AfterBowls_ReturnsExpectedValue()
+    public void GetTotalScore_AfterBowls_ReturnsExpectedValue()
     {
         //Arrange
         var items = new Tuple<int[], int>[]
@@ -221,12 +221,12 @@ public class GameManagerTest
         var actualResults = new List<int>();
         foreach (var item in items)
         {
-            GameManager gameManager = new GameManager();
+            ScoreManager scoreManager = new ScoreManager();
             foreach (var bowl in item.Bowls)
             {
-                gameManager.Bowl(bowl);
+                scoreManager.Bowl(bowl);
             }
-            actualResults.Add(gameManager.TotalScore);
+            actualResults.Add(scoreManager.GetTotalScore());
         }
 
         //Assert
@@ -234,7 +234,7 @@ public class GameManagerTest
     }
 
     [Test]
-    public void CumulativeFrameScores_AfterBowls_ReturnsExpectedValue()
+    public void GetCumulativeFrameScores_AfterBowls_ReturnsExpectedValues()
     {
         //Arrange
         var items = new Tuple<int[], int?[]>[]
@@ -275,6 +275,14 @@ public class GameManagerTest
                 new int[] { 8,1, 9,1, 10, 9,1, 10, 10, 10, 10, 9,1, 9,1,10 },
                 new int?[10] { 9, 29, 49, 69, 99, 129, 158, 178, 197, 217 }
                 ),
+            new Tuple<int[], int?[]>(
+                new int[] { 1,1, 1,1, 1,1, 1,1, 1,1, 1,1, 1,1, 1,1, 1,1, 1,1 },
+                new int?[10] { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20 }
+                ),
+            new Tuple<int[], int?[]>(
+                new int[] { 1,1, 1,1, 1,1, 1,1, 1,1, 1,1, 1,1, 1,1, 1,1, 9,1 },
+                new int?[10] { 2, 4, 6, 8, 10, 12, 14, 16, 18, null }
+                ),
         }
         .Select(t => new
         {
@@ -291,12 +299,133 @@ public class GameManagerTest
         var actualResults = new List<int?[]>();
         foreach (var item in items)
         {
-            GameManager gameManager = new GameManager();
+            ScoreManager scoreManager = new ScoreManager();
             foreach (var bowl in item.Bowls)
             {
-                gameManager.Bowl(bowl);
+                scoreManager.Bowl(bowl);
             }
-            actualResults.Add(gameManager.CumulativeFrameScores);
+            actualResults.Add(scoreManager.GetCumulativeFrameScores());
+        }
+
+        //Assert
+        for (int i = 0; i < expectedResults.Length; i++)
+        {
+            CollectionAssert.AreEqual(expectedResults[i], actualResults[i], $"Collection index: {i}");
+        }
+    }
+
+    [Test]
+    public void GetThrowsScores_AfterBowls_ReturnsExpectedValues()
+    {
+        //Arrange
+        var items = new Tuple<int[], string[]>[]
+        {
+            new Tuple<int[], string[]>(
+                new int[] { 2 },
+                new string[] 
+                {
+                    "2", null, null, null, null,
+                    null, null, null, null, null,
+                    null, null, null, null, null,
+                    null, null, null, null, null
+                }),
+            new Tuple<int[], string[]>(
+                new int[] { 2, 3 },
+                new string[]
+                {
+                    "2", "3", null, null, null,
+                    null, null, null, null, null,
+                    null, null, null, null, null,
+                    null, null, null, null, null
+                }),
+            new Tuple<int[], string[]>(
+                new int[] { 1, 2, 4 },
+                new string[]
+                {
+                    "1", "2", "4", null, null,
+                    null, null, null, null, null,
+                    null, null, null, null, null,
+                    null, null, null, null, null,
+                }),
+            new Tuple<int[], string[]>(
+                new int[] { 2, 8, 1, 2 },
+                new string[]
+                {
+                    "2", "/", "1", "2", null,
+                    null, null, null, null, null,
+                    null, null, null, null, null,
+                    null, null, null, null, null,
+                }),
+            new Tuple<int[], string[]>(
+                new int[] { 2, 8, 10, 7, 1 },
+                new string[]
+                {
+                    "2", "/", "X", null, "7",
+                    "1", null, null, null, null,
+                    null, null, null, null, null,
+                    null, null, null, null, null,
+                }),
+            new Tuple<int[], string[]>(
+                new int[] { 10, 10, 10, 0, 1 },
+                new string[]
+                {
+                    "X", null, "X", null, "X",
+                    null, "0", "1", null, null,
+                    null, null, null, null, null,
+                    null, null, null, null, null,
+                }),
+            new Tuple<int[], string[]>(
+                new int[] { 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10},
+                new string[]
+                {
+                    "X", null, "X", null, "X", null, "X", null, "X", null,
+                    "X", null, "X", null, "X", null, "X", null, "X", "X", "X"
+                }),
+            new Tuple<int[], string[]>(
+                new int[] { 1, 2, 5, 5, 5, 4, 5, 5, 10, 9, 1, 2, 3, 4, 6, 10, 10, 9, 1 },
+                new string[]
+                {
+                    "1", "2", "5", "/", "5",
+                    "4", "5", "/", "X", null,
+                    "9", "/", "2", "3", "4", "/", "X", null, "X", "9", "1",
+                }),
+            new Tuple<int[], string[]>(
+                new int[] { 8,1, 9,1, 10, 9,1, 10, 10, 10, 10, 9,1, 9,1,10 },
+                new string[]
+                {
+                    "8","1", "9","/", "X", null, "9","/", "X", null, "X", null, "X", null, "X", null, "9","/", "9","/", "X"
+                }),
+            new Tuple<int[], string[]>(
+                new int[] { 1,1, 1,1, 1,1, 1,1, 1,1, 1,1, 1,1, 1,1, 1,1, 1,1 },
+                new string[]
+                {
+                    "1", "1", "1", "1", "1",
+                    "1", "1", "1", "1", "1",
+                    "1", "1", "1", "1", "1",
+                    "1", "1", "1", "1", "1",
+                }),
+        }
+        .Select(t => new
+        {
+            Bowls = t.Item1,
+            ExpectedThrowResults = t.Item2
+        })
+        .ToArray();
+
+        var expectedResults = items
+            .Select(i => i.ExpectedThrowResults)
+            .ToArray();
+
+        //Act
+        var actualResults = new List<string[]>();
+        foreach (var item in items)
+        {
+            ScoreManager scoreManager = new ScoreManager();
+            foreach (var bowl in item.Bowls)
+            {
+                scoreManager.Bowl(bowl);
+            }
+            actualResults.Add(scoreManager.GetThrowResults());
         }
 
         //Assert
@@ -312,14 +441,14 @@ public class GameManagerTest
         //Arrange
         for (int i = 0; i < 7; i++)
         {
-            _gameManager.Bowl(3);
+            _scoreManager.Bowl(3);
         }
         //Act
-        _gameManager.Reset();
+        _scoreManager.Reset();
         //Assert
-        Assert.AreEqual(1, _gameManager.Frame);
-        Assert.AreEqual(0, _gameManager.CurrentThrow);
-        Assert.AreEqual(10, _gameManager.StandingPins);
-        Assert.AreEqual(0, _gameManager.TotalScore);
+        Assert.AreEqual(1, _scoreManager.Frame);
+        Assert.AreEqual(0, _scoreManager.CurrentThrow);
+        Assert.AreEqual(10, _scoreManager.StandingPins);
+        Assert.AreEqual(0, _scoreManager.GetTotalScore());
     }
 }
