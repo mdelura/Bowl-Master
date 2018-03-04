@@ -1647,56 +1647,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 6
       objectReference: {fileID: 0}
-    - target: {fileID: 54372790115799060, guid: 68869bf3ae57c0f45b962699a9a6e162,
-        type: 2}
-      propertyPath: m_CollisionDetection
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 54260503275422598, guid: 68869bf3ae57c0f45b962699a9a6e162,
-        type: 2}
-      propertyPath: m_CollisionDetection
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 54955635252360444, guid: 68869bf3ae57c0f45b962699a9a6e162,
-        type: 2}
-      propertyPath: m_CollisionDetection
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 54668220895839122, guid: 68869bf3ae57c0f45b962699a9a6e162,
-        type: 2}
-      propertyPath: m_CollisionDetection
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 54473045228208338, guid: 68869bf3ae57c0f45b962699a9a6e162,
-        type: 2}
-      propertyPath: m_CollisionDetection
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 54723701871887564, guid: 68869bf3ae57c0f45b962699a9a6e162,
-        type: 2}
-      propertyPath: m_CollisionDetection
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 54600954550634216, guid: 68869bf3ae57c0f45b962699a9a6e162,
-        type: 2}
-      propertyPath: m_CollisionDetection
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 54615113677801084, guid: 68869bf3ae57c0f45b962699a9a6e162,
-        type: 2}
-      propertyPath: m_CollisionDetection
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 54665117530899636, guid: 68869bf3ae57c0f45b962699a9a6e162,
-        type: 2}
-      propertyPath: m_CollisionDetection
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 54062747968522732, guid: 68869bf3ae57c0f45b962699a9a6e162,
-        type: 2}
-      propertyPath: m_CollisionDetection
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 68869bf3ae57c0f45b962699a9a6e162, type: 2}
   m_IsPrefabParent: 0
