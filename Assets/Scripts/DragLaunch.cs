@@ -15,6 +15,7 @@ public class DragLaunch : MonoBehaviour
     private float _nudgeXStartPos;
     private float _panelWidth;
     private PinManager _pinSetter;
+    private GameManager _gameManager;
 
     // Use this for initialization
     void Start()
@@ -23,6 +24,7 @@ public class DragLaunch : MonoBehaviour
         _xBound = GameObject.Find("Floor").transform.lossyScale.x / 2 - _ball.transform.lossyScale.x / 2;
         _panelWidth = Camera.main.ViewportToScreenPoint(transform.lossyScale).x;
         _pinSetter = FindObjectOfType<PinManager>();
+        _gameManager = FindObjectOfType<GameManager>();
     }
 
     // Update is called once per frame
@@ -72,7 +74,7 @@ public class DragLaunch : MonoBehaviour
 
     public void DragEnd()
     {
-        if (!_pinSetter.PinsReady)
+        if (!_pinSetter.PinsReady || !_gameManager.GameInProgress)
             return;
         //Calculate velocity and launch the ball
         float dragDuration = Time.time - _dragStartTime;
@@ -82,9 +84,9 @@ public class DragLaunch : MonoBehaviour
 
         //DEBUG
         _ySpeed.Add(dragVelocity.y / dragDuration);
-        //_ball.Launch(Vector3.forward * 15.5f);
+        _ball.Launch(Vector3.forward * 15.5f);
         print($"Average ySpeed is: {_ySpeed.Average()} m/s, {_ySpeed.Average() / 3.6f} km/h, current throw {launchVelocity.z / 3.6f} km/h");
-        _ball.Launch(launchVelocity);
+        //_ball.Launch(launchVelocity);
     }
 
 

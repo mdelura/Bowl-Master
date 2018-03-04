@@ -14,10 +14,10 @@ public class PinManager : MonoBehaviour
     public GameObject pinSetPrefab;
 
 
-    private int _currentPins = GameManager.TotalPins;
+    private int _currentPins = ScoreManager.TotalPins;
     private int _lastStandingCount = -1;
     private float _lastChangeTime;
-    private Ball _ball; //TODO: Refactor. PinManager shouldn't manage ball.
+    private Ball _ball;
     private Animator _animator;
     private GameObject _standingPins;
     private GameManager _gameManager;
@@ -74,9 +74,8 @@ public class PinManager : MonoBehaviour
     {
         int fallenPins = _currentPins - _lastStandingCount;
 
-        PreparePins(_gameManager.Bowl(fallenPins));
+        PreparePins(_gameManager.ScoreManager.Bowl(fallenPins));
         _lastStandingCount = -1;
-        _ball.Reset();
     }
 
     private void PreparePins(FrameAction frameAction)
@@ -91,7 +90,7 @@ public class PinManager : MonoBehaviour
         {
             CleanPins();
             _animator.SetTrigger(AnimatorParam.ResetTrigger);
-            _currentPins = GameManager.TotalPins;
+            _currentPins = ScoreManager.TotalPins;
         }
     }
 
